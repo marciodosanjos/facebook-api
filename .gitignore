@@ -1,0 +1,8 @@
+# Ignore node_modules rep
+node_modules
+
+# Ignore token file
+.token.js
+
+# Ignore excel file
+.hu-dataset-2023.xlsx
