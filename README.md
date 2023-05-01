@@ -1,2 +1,3 @@
 # api-fb
-getting post and page data from Facebook API
+
+Getting post and page data from Facebook API with this NodeJS application.
