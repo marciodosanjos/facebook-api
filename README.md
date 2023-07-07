@@ -1,5 +1,6 @@
 # api-fb
 
+feature/02-final
 This app were built to help you as a data analysts to collect, transform and integrate data about social media performance (marketing) more easily.
 
 # How does it works
@@ -17,3 +18,6 @@ Page Level
 Post Level
 
 Ads
+=======
+Getting post and page data from Facebook API with this NodeJS application.
+master
