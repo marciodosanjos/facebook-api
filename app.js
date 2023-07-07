@@ -1,11 +1,14 @@
 const express = require("express");
 const app = express();
 
-//import functions to fetch data
-const getInstaPageData = require("./igpagelevel");
-const getInstaPostData = require("./igpostlevel");
-const getFacePostData = require('./fbpostlevel');
-const getFacePageData = require('./fbpagelevel');
+//import functions to get data
+const getInstaPostData = require("./handlers/postlevel/igpostlevel");
+const getInstaPageData = require("./handlers/pagelevel/igpagelevel");
+const getFacePageData = require("./handlers/pagelevel/fbpagelevel");
+const getFacePostData = require("./handlers/postlevel/fbpostlevel");
+const getAdsGenderAgeData = require("./handlers/ads/adsgenderage");
+const getAdsRegionCountry = require("./handlers/ads/adsregioncountry");
+const getAdsPlatform = require("./handlers/ads/adsplatform");
 
 //tokens
 const igToken = require("./tokens/igtoken");
@@ -14,7 +17,7 @@ const tokenfbbr = require("./tokens/tokenfbbr");
 
 //============================== INSTAGRAM POST LEVEL =========================//
 
-// //get insta post data LATAM
+// // get insta post data LATAM
 // getInstaPostData("17841457817656889", igToken);
 
 // //get insta post data BR
@@ -31,20 +34,30 @@ const tokenfbbr = require("./tokens/tokenfbbr");
 //============================== FACEBOOK POST LEVEL =========================//
 
 // //get fb post level data BR
-// getFacePostData('108683005456780', tokenfbbr);
+// getFacePostData("108683005456780", tokenfbbr);
 
-// // get fb post level data LATAM
-// getFacePostData('260411577472305', tokenfblatam);
+//get fb post level data LATAM
+// getFacePostData("260411577472305", tokenfblatam);
 
 //============================== FACEBOOK PAGE LEVEL =========================//
 
-// // get fb page level data BR
-// getFacePageData('108683005456780', tokenfbbr)
+// //get fb page level data BR
+// getFacePageData("108683005456780", tokenfbbr);
 
-// // get fb page level data LATAM
-// getFacePageData('260411577472305', tokenfblatam)
+// //get fb page level data LATAM
+// getFacePageData("260411577472305", tokenfblatam);
 
+//============================== Ads ========================================//
+
+// //get ads data gender and age breakdown
+// getAdsGenderAgeData("act_726387872139953", igToken);
+
+//get ads data region and country breakdown
+// getAdsRegionCountry("act_726387872139953", igToken);
+
+// //get ads data platform breakdown
+// getAdsPlatform("act_726387872139953", igToken);
 
 app.listen("8080", () => {
-    console.log("Server running");
+  console.log("Server running");
 });
