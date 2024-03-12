@@ -12,10 +12,11 @@ const doc = new GoogleSpreadsheet(
 const getAdsRegionCountry = async (account, token) => {
   //========================== Step 1: Getting data via API ===========================
 
-  const url = `https://graph.facebook.com/v16.0/${account}/insights?time_increment=1&time_range={since:'2023-05-01',until:'2023-05-10'}&level=ad&fields=ad_id,campaign_name, adset_name, ad_name,frequency, spend, reach, impressions, objective, optimization_goal, clicks, actions&action_breakdowns=action_type&breakdowns=region, country&access_token=${token}`;
+    
+  const url = `https://graph.facebook.com/v16.0/${account}/insights?time_increment=1&time_range={since:'2023-05-16',until:'2023-05-20'}&level=ad&fields=ad_id,campaign_name, adset_name, ad_name,frequency, spend, reach, impressions, objective, optimization_goal, clicks, actions&action_breakdowns=action_type&breakdowns=region, country&access_token=${token}`;
 
   //raw data
-  // let response = await axios.get(url);
+  let response = await axios.get(url);
   // let datum = response.data.data;
   // console.log(datum);
 

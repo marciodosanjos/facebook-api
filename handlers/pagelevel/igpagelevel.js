@@ -2,6 +2,7 @@
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 const axios = require("axios");
 const fetch = require("node-fetch");
+const { v4: uuidv4 } = require('uuid');
 
 // Initialize Google Sheets Auth
 const creds = require("../../tokens/key.json");
@@ -12,7 +13,7 @@ const doc = new GoogleSpreadsheet(
 const getInstaPageData = async (pageId, token) => {
   //========================== Step 1: Getting data via API ===========================
 
-  const url = `https://graph.facebook.com/v14.0/${pageId}/insights?metric=follower_count, profile_views, website_clicks&period=day&since=2023-06-05&until=2023-06-30&access_token=${token}`;
+  const url = `https://graph.facebook.com/v14.0/${pageId}/insights?metric=follower_count, profile_views, website_clicks&period=day&since=2024-02-12&until=2024-03-13&access_token=${token}`;
 
   let response = await axios.get(url);
 
@@ -30,7 +31,7 @@ const getInstaPageData = async (pageId, token) => {
   //2 - storing in this array of objects the basic data about the page
   let result = date.map((item, index) => {
     return {
-      id: item.slice(6, 7) + item.slice(8, 10) + pageId.slice(0, 6),
+      id: follow_count [index] *976245695 + website_clicks[index] * 455687456 + profile_views[index] * 37234532 + new Date().getFullYear(),
       date: item,
       follow_count: follow_count[index],
       profile_views: profile_views[index],
@@ -38,8 +39,6 @@ const getInstaPageData = async (pageId, token) => {
       page_id: pageId,
     };
   });
-
-  console.log(result);
 
   //========================== Step 2: Recording data on DB ===========================
   await doc.useServiceAccountAuth(creds);
@@ -93,7 +92,7 @@ const getInstaPageData = async (pageId, token) => {
         3000
       );
 
-      // update current row values
+      // update current row values if ID the same
       currentRows = items.filter((item1) =>
         result.some((item2) => {
           if (item1.id == item2.id) {

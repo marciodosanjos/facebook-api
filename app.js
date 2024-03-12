@@ -17,8 +17,9 @@ const tokenfbbr = require("./tokens/tokenfbbr");
 
 //============================== INSTAGRAM POST LEVEL =========================//
 
-// // get insta post data LATAM
+// //get insta post data LATAM
 // getInstaPostData("17841457817656889", igToken);
+
 
 // //get insta post data BR
 // getInstaPostData("17841457253047574", igToken);
@@ -28,15 +29,15 @@ const tokenfbbr = require("./tokens/tokenfbbr");
 // //get insta page data BR
 // getInstaPageData("17841457817656889", igToken);
 
-// //get insta page data LATAM
-// getInstaPageData("17841457253047574", igToken);
+//get insta page data LATAM
+getInstaPageData("17841457253047574", igToken);
 
 //============================== FACEBOOK POST LEVEL =========================//
 
 // //get fb post level data BR
 // getFacePostData("108683005456780", tokenfbbr);
 
-//get fb post level data LATAM
+// // get fb post level data LATAM
 // getFacePostData("260411577472305", tokenfblatam);
 
 //============================== FACEBOOK PAGE LEVEL =========================//
@@ -47,12 +48,12 @@ const tokenfbbr = require("./tokens/tokenfbbr");
 // //get fb page level data LATAM
 // getFacePageData("260411577472305", tokenfblatam);
 
-//============================== Ads ========================================//
+//============================== ADS ========================================//
 
 // //get ads data gender and age breakdown
 // getAdsGenderAgeData("act_726387872139953", igToken);
 
-//get ads data region and country breakdown
+// // get ads data region and country breakdown
 // getAdsRegionCountry("act_726387872139953", igToken);
 
 // //get ads data platform breakdown
