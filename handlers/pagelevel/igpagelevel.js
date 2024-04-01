@@ -2,7 +2,7 @@
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 const axios = require("axios");
 const fetch = require("node-fetch");
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 
 // Initialize Google Sheets Auth
 const creds = require("../../tokens/key.json");
@@ -13,7 +13,7 @@ const doc = new GoogleSpreadsheet(
 const getInstaPageData = async (pageId, token) => {
   //========================== Step 1: Getting data via API ===========================
 
-  const url = `https://graph.facebook.com/v14.0/${pageId}/insights?metric=follower_count, profile_views, website_clicks&period=day&since=2024-02-12&until=2024-03-13&access_token=${token}`;
+  const url = `https://graph.facebook.com/v14.0/${pageId}/insights?metric=follower_count, profile_views, website_clicks&period=day&since=2024-03-13&until=2024-04-01&access_token=${token}`;
 
   let response = await axios.get(url);
 
@@ -31,7 +31,11 @@ const getInstaPageData = async (pageId, token) => {
   //2 - storing in this array of objects the basic data about the page
   let result = date.map((item, index) => {
     return {
-      id: follow_count [index] *976245695 + website_clicks[index] * 455687456 + profile_views[index] * 37234532 + new Date().getFullYear(),
+      id:
+        follow_count[index] * 976245695 +
+        website_clicks[index] * 455687456 +
+        profile_views[index] * 37234532 +
+        new Date().getFullYear(),
       date: item,
       follow_count: follow_count[index],
       profile_views: profile_views[index],

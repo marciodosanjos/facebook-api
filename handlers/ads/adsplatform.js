@@ -10,9 +10,8 @@ const doc = new GoogleSpreadsheet(
 );
 
 const getAdsPlatform = async (account, token) => {
-  
   //========================== Step 1: Fechting data via API ===========================
-  const url = `https://graph.facebook.com/v18.0/${account}/insights?time_increment=1&time_range={since:'2024-03-01',until:'2024-03-11'}&level=ad&fields=ad_id,campaign_name, adset_name, ad_name,frequency, spend, reach, impressions, objective, optimization_goal, clicks, actions&action_breakdowns=action_type&breakdowns=publisher_platform,platform_position, device_platform,impression_device&access_token=${token}`;
+  const url = `https://graph.facebook.com/v19.0/${account}/insights?time_increment=1&time_range={since:'2024-03-11',until:'2024-03-31'}&level=ad&fields=ad_id,campaign_name, adset_name, ad_name,frequency, spend, reach, impressions, objective, optimization_goal, clicks, actions&action_breakdowns=action_type&breakdowns=publisher_platform,platform_position, device_platform,impression_device&access_token=${token}`;
 
   //raw data
   // let response = await axios.get(url);
@@ -164,7 +163,7 @@ const getAdsPlatform = async (account, token) => {
     }
   });
 
-  //   //storing the data on the ads performance in the array results
+  //storing the data on the ads performance in the array results
   let result = data.map((element, index) => {
     return {
       id:
@@ -202,9 +201,6 @@ const getAdsPlatform = async (account, token) => {
     };
   });
 
-  console.log(result);
-  console.log(result.map((el) => el.id));
-
   function temDuplicatas(arr) {
     const valoresUnicos = arr.map((elem, index, self) => {
       return self.indexOf(elem) === index;
@@ -213,7 +209,6 @@ const getAdsPlatform = async (account, token) => {
   }
 
   console.log(temDuplicatas(result));
-  console.log(result);
 
   //========================== Step 2: Recording data on DB ===========================
   await doc.useServiceAccountAuth(creds);

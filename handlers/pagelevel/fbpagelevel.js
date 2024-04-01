@@ -10,10 +10,10 @@ const doc = new GoogleSpreadsheet(
 );
 
 const getFacePageData = async (pageid, token) => {
-  //========================== Step 1: Getting data via API ===========================
+  //========================== Step 1: Fetching raw data via API ===========================
 
   //url
-  const url = `https://graph.facebook.com/v18.0/${pageid}/insights?metric=page_posts_impressions_paid,page_posts_impressions_paid_unique, page_posts_impressions_organic,page_posts_impressions_organic_unique, page_engaged_users, page_total_actions, page_post_engagements, page_consumptions_by_consumption_type, page_fan_adds_by_paid_non_paid_unique,page_actions_post_reactions_total,page_fans,page_fan_adds, page_fan_removes, page_fans_by_like_source, page_fans_gender_age&since=2024-2-29&until=2024-3-11&period=day&access_token=${token}`;
+  const url = `https://graph.facebook.com/v18.0/${pageid}/insights?metric=page_posts_impressions_paid,page_posts_impressions_paid_unique, page_posts_impressions_organic,page_posts_impressions_organic_unique, page_total_actions, page_post_engagements, page_consumptions_by_consumption_type, page_fan_adds_by_paid_non_paid_unique,page_actions_post_reactions_total,page_fans,page_fan_adds, page_fan_removes&since=2024-02-29&until=2024-04-01&period=day&access_token=${token}`;
 
   let response = await axios.get(url);
   const data = response.data.data;
@@ -43,19 +43,20 @@ const getFacePageData = async (pageid, token) => {
   const organicImpressionsUnique = rawOrgImpUnique.map((el) => el.value);
 
   //page_engaged_users
-  const rawEngagedUsers = data[4].values;
-  const engagedUsers = rawEngagedUsers.map((el) => el.value);
+  //const rawEngagedUsers = data[4].values
+  //const engagedUsers = rawEngagedUsers.map((el) => el.value);
+  const engagedUsers = 0;
 
   //page_total_actions
-  const rawTotalActions = data[5].values;
+  const rawTotalActions = data[4].values;
   const totalActions = rawTotalActions.map((el) => el.value);
 
   //page_post_engagements
-  const rawEngagements = data[6].values;
+  const rawEngagements = data[5].values;
   const engagements = rawEngagements.map((el) => el.value);
 
   //link_clicks
-  const rawClicks = data[7].values;
+  const rawClicks = data[6].values;
   const linkClicks = rawClicks.map((el) =>
     el.value["link clicks"] == undefined ? 0 : el.value["link clicks"]
   );
@@ -71,7 +72,7 @@ const getFacePageData = async (pageid, token) => {
   );
 
   //new_page_fans_paid
-  const rawPageFans = data[8].values;
+  const rawPageFans = data[7].values;
   const pageFansPaid = rawPageFans.map((el) =>
     el.value["paid"] == undefined ? 0 : el.value["paid"]
   );
@@ -82,7 +83,7 @@ const getFacePageData = async (pageid, token) => {
   );
 
   //likes
-  const postReactions = data[9].values;
+  const postReactions = data[8].values;
   const likes = postReactions.map((el) =>
     el.value["like"] == undefined ? 0 : el.value["like"]
   );
@@ -93,43 +94,52 @@ const getFacePageData = async (pageid, token) => {
   );
 
   //page_fans: Lifetime Total Likes
-  const rawpageFans = data[10].values;
+  const rawpageFans = data[9].values;
   const pageFans = rawpageFans.map((el) => el.value);
 
   //page_fan_adds: Daily New Likes
-  const rawpageFansAdds = data[11].values;
+  const rawpageFansAdds = data[10].values;
   const pageFansAdds = rawpageFansAdds.map((el) => el.value);
 
   //page_fan_removes: Daily Unlikes
-  const rawpageFansRemoves = data[12].values;
+  const rawpageFansRemoves = data[11].values;
   const pageFansRemoves = rawpageFansRemoves.map((el) => el.value);
 
   //page_fans_ads: Daily Like Sources from page fan coming from Ads
-  const rawpageFansAds = data[13].values;
-  const pageFansAds = rawpageFansAds.map((el) =>
-    el.value["Ads"] == undefined ? 0 : el.value["Ads"]
-  );
+  // const rawpageFansAds = data[13].values;
+  // const pageFansAds = rawpageFansAds.map((el) =>
+  //   el.value["Ads"] == undefined ? 0 : el.value["Ads"]
+  // );
+  const pageFansAds = 0;
 
   //page_fans_page: Daily Like Sources from fan coming from the owned Page
-  const pageFansYourPage = rawpageFansAds.map((el) =>
-    el.value["Your Page"] == undefined ? 0 : el.value["Your Page"]
-  );
+  // const pageFansYourPage = rawpageFansAds.map((el) =>
+  //   el.value["Your Page"] == undefined ? 0 : el.value["Your Page"]
+  // );
+
+  const pageFansYourPage = 0;
 
   //page_fans_page: Daily Like Sources from fan coming from other sources
-  const pageFansSourceOthers = rawpageFansAds.map((el) =>
-    el.value["Other"] == undefined ? 0 : el.value["Other"]
-  );
+  // const pageFansSourceOthers = rawpageFansAds.map((el) =>
+  //   el.value["Other"] == undefined ? 0 : el.value["Other"]
+  // );
+
+  const pageFansSourceOthers = 0;
 
   //send data to array of objects
   const fbPageData = finalDate.map((item, index) => {
     return {
       date: item,
-      id: item.slice(6, 7) + item.slice(8, 10) + pageid.slice(1, 6) + new Date().getFullYear(),
+      id:
+        item.slice(6, 7) +
+        item.slice(8, 10) +
+        pageid.slice(1, 6) +
+        new Date().getFullYear(),
       paid_impressions: paidImpressions[index],
       paid_impressions_unique: paidImpressionsUnique[index],
       organic_impressions: organicImpressions[index],
       impressions_organic_unique: organicImpressionsUnique[index],
-      engaged_users: engagedUsers[index],
+      engaged_users: engagedUsers, // até 01.04 estava engagedUsers[index]. Metrica foi depreciada
       total_actions: totalActions[index],
       engagements: engagements[index],
       engaged_users: engagedUsers[index],
@@ -143,9 +153,9 @@ const getFacePageData = async (pageid, token) => {
       page_fans: pageFans[index],
       page_fans_adds: pageFansAdds[index],
       page_fans_removes: pageFansRemoves[index],
-      page_fans_source_ads: pageFansAds[index],
-      page_fans_source_your_page: pageFansYourPage[index],
-      page_fans_source_others: pageFansSourceOthers[index],
+      page_fans_source_ads: pageFansAds,
+      page_fans_source_your_page: pageFansYourPage,
+      page_fans_source_others: pageFansSourceOthers,
       pageid: pageid,
     };
   });

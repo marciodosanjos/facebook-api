@@ -20,7 +20,6 @@ const tokenfbbr = require("./tokens/tokenfbbr");
 // //get insta post data LATAM
 // getInstaPostData("17841457817656889", igToken);
 
-
 // //get insta post data BR
 // getInstaPostData("17841457253047574", igToken);
 
@@ -29,8 +28,8 @@ const tokenfbbr = require("./tokens/tokenfbbr");
 // //get insta page data BR
 // getInstaPageData("17841457817656889", igToken);
 
-//get insta page data LATAM
-getInstaPageData("17841457253047574", igToken);
+// //get insta page data LATAM
+// getInstaPageData("17841457253047574", igToken);
 
 //============================== FACEBOOK POST LEVEL =========================//
 
