@@ -13,7 +13,7 @@ const getFacePageData = async (pageid, token) => {
   //========================== Step 1: Fetching raw data via API ===========================
 
   //url
-  const url = `https://graph.facebook.com/v18.0/${pageid}/insights?metric=page_posts_impressions_paid,page_posts_impressions_paid_unique, page_posts_impressions_organic,page_posts_impressions_organic_unique, page_total_actions, page_post_engagements, page_consumptions_by_consumption_type, page_fan_adds_by_paid_non_paid_unique,page_actions_post_reactions_total,page_fans,page_fan_adds, page_fan_removes&since=2024-02-29&until=2024-04-01&period=day&access_token=${token}`;
+  const url = `https://graph.facebook.com/v18.0/${pageid}/insights?metric=page_posts_impressions_paid,page_posts_impressions_paid_unique, page_posts_impressions_organic,page_posts_impressions_organic_unique, page_total_actions, page_post_engagements, page_consumptions_by_consumption_type, page_fan_adds_by_paid_non_paid_unique,page_actions_post_reactions_total,page_fans,page_fan_adds, page_fan_removes&since=2024-04-31&until=2024-05-31&period=day&access_token=${token}`;
 
   let response = await axios.get(url);
   const data = response.data.data;

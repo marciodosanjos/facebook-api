@@ -13,7 +13,7 @@ const doc = new GoogleSpreadsheet(
 const getInstaPageData = async (pageId, token) => {
   //========================== Step 1: Getting data via API ===========================
 
-  const url = `https://graph.facebook.com/v14.0/${pageId}/insights?metric=follower_count, profile_views, website_clicks&period=day&since=2024-03-13&until=2024-04-01&access_token=${token}`;
+  const url = `https://graph.facebook.com/v14.0/${pageId}/insights?metric=follower_count, profile_views, website_clicks&period=day&since=2024-05-06&until=2024-05-31&access_token=${token}`;
 
   let response = await axios.get(url);
 

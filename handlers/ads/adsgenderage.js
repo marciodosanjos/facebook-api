@@ -10,14 +10,9 @@ const doc = new GoogleSpreadsheet(
 );
 
 const getAdsGenderAgeData = async (account, token) => {
-  //========================== Step 1: Getting data via API ===========================
+  //===================== Step 1: Fetching and organinzing data ===================//
 
-  const url = `https://graph.facebook.com/v19.0/${account}/insights?time_increment=1&time_range={since:'2024-03-11',until:'2024-03-31'}&level=ad&fields=ad_id,campaign_name, adset_name, ad_name,frequency, spend, reach, impressions, objective, optimization_goal, clicks, actions&action_breakdowns=action_type&breakdowns= age, gender&access_token=${token}`;
-
-  //raw data
-  // let response = await axios.get(url);
-  // let datum = response.data.data;
-  // console.log(datum);
+  const url = `https://graph.facebook.com/v19.0/${account}/insights?time_increment=1&time_range={since:'2024-05-20',until:'2024-05-31'}&level=ad&fields=ad_id,campaign_name, adset_name, ad_name,frequency,spend,reach,impressions,objective,optimization_goal,clicks,actions&action_breakdowns=action_type&breakdowns=age,gender&access_token=${token}`;
 
   //handle pagination
   async function fetchPaginatedData(url) {
@@ -38,8 +33,9 @@ const getAdsGenderAgeData = async (account, token) => {
   }
 
   const data = await fetchPaginatedData(url);
+  console.log(data[0]);
 
-  // orgazing data on key metrics in arrays
+  // orgazing data in arrays
   let cliques = data.map((el) => {
     if (el.actions) {
       let cliques = el.actions.find((el) =>
@@ -170,10 +166,11 @@ const getAdsGenderAgeData = async (account, token) => {
       id:
         element.age.slice(0, 2) +
         element.gender.slice(0, 2).toUpperCase() +
-        element.reach +
-        element.impressions +
-        element.ad_name.slice(0, 4) +
-        element.campaign_name.slice(1, 3),
+        element.adset_name.slice(3, 5) +
+        element.gender.slice(1, 4) +
+        element.age +
+        element.campaign_name.slice(1, 3) +
+        element.ad_id.slice(2, 8),
       ad_id: element.ad_id,
       date_start: element.date_start,
       date_stop: element.date_stop,
@@ -183,9 +180,9 @@ const getAdsGenderAgeData = async (account, token) => {
       objective: element.objective,
       optimization_goal: element.optimization_goal,
       spend: element.spend,
-      frequency: element.frequency,
-      reach: element.reach,
-      impressions: element.impressions,
+      frequency: element.frequency ? element.frequency : 0,
+      reach: element.reach ? element.frequency : 0,
+      impressions: element.impressions ? element.impressions : 0,
       age: element.age,
       gender: element.gender,
       link_clicks: cliques[index],
@@ -200,8 +197,7 @@ const getAdsGenderAgeData = async (account, token) => {
     };
   });
 
-  console.log(result);
-  console.log(result.map((el) => el.id));
+  console.log(result[0]);
 
   function temDuplicatas(arr) {
     const valoresUnicos = arr.map((elem, index, self) => {
@@ -209,9 +205,6 @@ const getAdsGenderAgeData = async (account, token) => {
     });
     return arr.length !== valoresUnicos.length;
   }
-
-  console.log(temDuplicatas(result));
-  console.log(result);
 
   //========================== Step 2: Recording data on DB ===========================
   await doc.useServiceAccountAuth(creds);

@@ -11,7 +11,7 @@ const doc = new GoogleSpreadsheet(
 
 const getAdsPlatform = async (account, token) => {
   //========================== Step 1: Fechting data via API ===========================
-  const url = `https://graph.facebook.com/v19.0/${account}/insights?time_increment=1&time_range={since:'2024-03-11',until:'2024-03-31'}&level=ad&fields=ad_id,campaign_name, adset_name, ad_name,frequency, spend, reach, impressions, objective, optimization_goal, clicks, actions&action_breakdowns=action_type&breakdowns=publisher_platform,platform_position, device_platform,impression_device&access_token=${token}`;
+  const url = `https://graph.facebook.com/v19.0/${account}/insights?time_increment=1&time_range={since:'2024-05-20',until:'2024-05-31'}&level=ad&fields=ad_id,campaign_name, adset_name, ad_name,frequency, spend, reach, impressions, objective, optimization_goal, clicks, actions&action_breakdowns=action_type&breakdowns=publisher_platform,platform_position, device_platform,impression_device&access_token=${token}`;
 
   //raw data
   // let response = await axios.get(url);
@@ -169,10 +169,11 @@ const getAdsPlatform = async (account, token) => {
       id:
         element.publisher_platform.slice(0, 2) +
         element.platform_position.slice(0, 2).toUpperCase() +
-        element.reach +
-        element.impressions +
         element.ad_name.slice(0, 4) +
-        element.campaign_name.slice(1, 3),
+        element.campaign_name.slice(1, 3) +
+        element.device_platform.slice(3, 6) +
+        element.impression_device.slice(3, 6) +
+        element.ad_id.slice(2, 8),
       ad_id: element.ad_id,
       date_start: element.date_start,
       date_stop: element.date_stop,
@@ -182,9 +183,9 @@ const getAdsPlatform = async (account, token) => {
       objective: element.objective,
       optimization_goal: element.optimization_goal,
       spend: element.spend,
-      frequency: element.frequency,
-      reach: element.reach,
-      impressions: element.impressions,
+      frequency: element.frequency ? element.frequency : 0,
+      reach: element.reach ? element.frequency : 0,
+      impressions: element.impressions ? element.impressions : 0,
       publisher_platform: element.publisher_platform,
       platform_position: element.platform_position,
       link_clicks: cliques[index],

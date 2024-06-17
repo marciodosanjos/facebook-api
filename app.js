@@ -9,6 +9,7 @@ const getFacePostData = require("./handlers/postlevel/fbpostlevel");
 const getAdsGenderAgeData = require("./handlers/ads/adsgenderage");
 const getAdsRegionCountry = require("./handlers/ads/adsregioncountry");
 const getAdsPlatform = require("./handlers/ads/adsplatform");
+const googleAPI = require("./handlers/google/google");
 
 //tokens
 const igToken = require("./tokens/igtoken");
@@ -49,7 +50,7 @@ const tokenfbbr = require("./tokens/tokenfbbr");
 
 //============================== ADS ========================================//
 
-// //get ads data gender and age breakdown
+// //get ads data gender and age breakdown'
 // getAdsGenderAgeData("act_726387872139953", igToken);
 
 // // get ads data region and country breakdown
@@ -57,6 +58,11 @@ const tokenfbbr = require("./tokens/tokenfbbr");
 
 // //get ads data platform breakdown
 // getAdsPlatform("act_726387872139953", igToken);
+
+//============================== Google ========================================//
+
+// resultados de pesquisa
+googleAPI();
 
 app.listen("8080", () => {
   console.log("Server running");
