@@ -13,7 +13,7 @@ const getFacePageData = async (pageid, token) => {
   //========================== Step 1: Fetching raw data via API ===========================
 
   //url
-  const url = `https://graph.facebook.com/v18.0/${pageid}/insights?metric=page_posts_impressions_paid,page_posts_impressions_paid_unique, page_posts_impressions_organic,page_posts_impressions_organic_unique, page_total_actions, page_post_engagements, page_consumptions_by_consumption_type, page_fan_adds_by_paid_non_paid_unique,page_actions_post_reactions_total,page_fans,page_fan_adds, page_fan_removes&since=2024-04-31&until=2024-05-31&period=day&access_token=${token}`;
+  const url = `https://graph.facebook.com/v19.0/${pageid}/insights?metric=page_posts_impressions_paid,page_posts_impressions_paid_unique, page_posts_impressions_organic,page_posts_impressions_organic_unique, page_total_actions, page_post_engagements, page_fan_adds_by_paid_non_paid_unique,page_actions_post_reactions_total,page_fans,page_fan_adds, page_fan_removes&since=2024-08-31&until=2024-09-30&period=day&access_token=${token}`;
 
   let response = await axios.get(url);
   const data = response.data.data;
@@ -101,9 +101,9 @@ const getFacePageData = async (pageid, token) => {
   const rawpageFansAdds = data[10].values;
   const pageFansAdds = rawpageFansAdds.map((el) => el.value);
 
-  //page_fan_removes: Daily Unlikes
-  const rawpageFansRemoves = data[11].values;
-  const pageFansRemoves = rawpageFansRemoves.map((el) => el.value);
+  // //page_fan_removes: Daily Unlikes
+  // const rawpageFansRemoves = data[11].values;
+  // const pageFansRemoves = rawpageFansRemoves.map((el) => el.value);
 
   //page_fans_ads: Daily Like Sources from page fan coming from Ads
   // const rawpageFansAds = data[13].values;
@@ -152,13 +152,15 @@ const getFacePageData = async (pageid, token) => {
       loves: loves[index],
       page_fans: pageFans[index],
       page_fans_adds: pageFansAdds[index],
-      page_fans_removes: pageFansRemoves[index],
+      page_fans_removes: 0,
       page_fans_source_ads: pageFansAds,
       page_fans_source_your_page: pageFansYourPage,
       page_fans_source_others: pageFansSourceOthers,
       pageid: pageid,
     };
   });
+
+  console.log(fbPageData);
 
   //========================== Step 2: Recording data on DB ===========================
 
@@ -209,8 +211,6 @@ const getFacePageData = async (pageid, token) => {
   const newData = fbPageData.filter(
     (item) => !items.find((item2) => item.id == item2.id)
   );
-
-  console.log(!newData);
 
   // verify how many records is on the db
   if (items.length == 0) {

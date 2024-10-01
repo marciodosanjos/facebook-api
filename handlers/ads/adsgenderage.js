@@ -12,21 +12,25 @@ const doc = new GoogleSpreadsheet(
 const getAdsGenderAgeData = async (account, token) => {
   //===================== Step 1: Fetching and organinzing data ===================//
 
-  const url = `https://graph.facebook.com/v19.0/${account}/insights?time_increment=1&time_range={since:'2024-05-20',until:'2024-05-31'}&level=ad&fields=ad_id,campaign_name, adset_name, ad_name,frequency,spend,reach,impressions,objective,optimization_goal,clicks,actions&action_breakdowns=action_type&breakdowns=age,gender&access_token=${token}`;
+  const url = `https://graph.facebook.com/v19.0/${account}/insights?time_increment=1&time_range={since:'2024-09-15',until:'2024-09-30'}&level=ad&fields=ad_id,campaign_name, adset_name, ad_name,frequency,spend,reach,impressions,objective,optimization_goal,clicks,actions&action_breakdowns=action_type&breakdowns=age,gender&access_token=${token}`;
 
-  //handle pagination
   async function fetchPaginatedData(url) {
     let allData = [];
     let nextUrl = url;
     do {
-      const response = await fetch(nextUrl);
-      const data = await response.json();
-      if (data.data) {
-        allData = allData.concat(data.data);
-      } else {
-        console.log({ error: data.error });
+      try {
+        const response = await fetch(nextUrl, { timeout: 30000 }); // timeout em milissegundos (30 segundos)
+        const data = await response.json();
+        if (data.data) {
+          allData = allData.concat(data.data);
+        } else {
+          console.log({ error: data.error });
+        }
+        nextUrl = data.paging ? data.paging.next : null;
+      } catch (error) {
+        console.error(`Fetch error: ${error.message}`);
+        break;
       }
-      nextUrl = data.paging ? data.paging.next : null;
     } while (nextUrl);
 
     return allData;
@@ -196,8 +200,6 @@ const getAdsGenderAgeData = async (account, token) => {
       video_views: videoViews[index],
     };
   });
-
-  console.log(result[0]);
 
   function temDuplicatas(arr) {
     const valoresUnicos = arr.map((elem, index, self) => {
