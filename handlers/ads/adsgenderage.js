@@ -12,14 +12,25 @@ const doc = new GoogleSpreadsheet(
 const getAdsGenderAgeData = async (account, token) => {
   //===================== Step 1: Fetching and organinzing data ===================//
 
-  const url = `https://graph.facebook.com/v19.0/${account}/insights?time_increment=1&time_range={since:'2024-09-15',until:'2024-09-30'}&level=ad&fields=ad_id,campaign_name, adset_name, ad_name,frequency,spend,reach,impressions,objective,optimization_goal,clicks,actions&action_breakdowns=action_type&breakdowns=age,gender&access_token=${token}`;
+  // call teste act_726387872139953/insights?time_increment=30&time_range={since:'2024-01-01',until:'2024-01-30'}&fields=reach
+
+  const url = `https://graph.facebook.com/v19.0/${account}/insights?time_increment=1&time_range={since:'2024-04-01',until:'2024-04-15'}&level=ad&fields=ad_id,campaign_name, adset_name, ad_name,frequency,spend,reach,impressions,objective,optimization_goal,clicks,actions&action_breakdowns=action_type&breakdowns=age,gender&access_token=${token}`;
 
   async function fetchPaginatedData(url) {
     let allData = [];
     let nextUrl = url;
+    let retryCount = 0;
+    const maxRetries = 5;
+
     do {
       try {
+        console.log("Fetching data...");
         const response = await fetch(nextUrl, { timeout: 30000 }); // timeout em milissegundos (30 segundos)
+        const remainingQuota = response.headers.get("X-RateLimit-Remaining");
+        const resetTime = response.headers.get("X-RateLimit-Reset");
+        console.log(remainingQuota);
+        console.log(resetTime);
+
         const data = await response.json();
         if (data.data) {
           allData = allData.concat(data.data);
@@ -27,17 +38,32 @@ const getAdsGenderAgeData = async (account, token) => {
           console.log({ error: data.error });
         }
         nextUrl = data.paging ? data.paging.next : null;
+
+        // Reset retry count on successful request
+        retryCount = 0;
       } catch (error) {
         console.error(`Fetch error: ${error.message}`);
-        break;
+        if (retryCount >= maxRetries) {
+          console.error("Max retries reached, aborting...");
+          break;
+        }
+
+        // Aguardar com backoff exponencial
+        const delay = Math.pow(2, retryCount) * 1000; // Ex: 1s, 2s, 4s, 8s...
+        console.log(`Retrying in ${delay / 1000} seconds...`);
+        await sleep(delay);
+        retryCount++;
       }
     } while (nextUrl);
 
     return allData;
   }
 
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
   const data = await fetchPaginatedData(url);
-  console.log(data[0]);
 
   // orgazing data in arrays
   let cliques = data.map((el) => {
@@ -164,7 +190,7 @@ const getAdsGenderAgeData = async (account, token) => {
     }
   });
 
-  //   //storing the data on the ads performance in the array results
+  //   //storing the data on the ads performance
   let result = data.map((element, index) => {
     return {
       id:
@@ -185,7 +211,7 @@ const getAdsGenderAgeData = async (account, token) => {
       optimization_goal: element.optimization_goal,
       spend: element.spend,
       frequency: element.frequency ? element.frequency : 0,
-      reach: element.reach ? element.frequency : 0,
+      reach: element.reach ? element.reach : 0,
       impressions: element.impressions ? element.impressions : 0,
       age: element.age,
       gender: element.gender,
@@ -200,6 +226,13 @@ const getAdsGenderAgeData = async (account, token) => {
       video_views: videoViews[index],
     };
   });
+
+  // Somar o reach de todos os itens
+  const totalReach = result.reduce((sum, item) => {
+    return sum + parseInt(item.reach); // Converter reach para número
+  }, 0);
+
+  console.log("Total de Reach:", totalReach);
 
   function temDuplicatas(arr) {
     const valoresUnicos = arr.map((elem, index, self) => {
@@ -221,33 +254,33 @@ const getAdsGenderAgeData = async (account, token) => {
   //instance sheet
   const adsGenderAgePageSheet = doc.sheetsByIndex[4];
 
-  //creating header columns
-  await adsGenderAgePageSheet.setHeaderRow([
-    "id",
-    "ad_id",
-    "date_start",
-    "date_stop",
-    "ad_name",
-    "adset_name",
-    "campaign_name",
-    "objective",
-    "optimization_goal",
-    "spend",
-    "frequency",
-    "reach",
-    "impressions",
-    "age",
-    "gender",
-    "link_clicks",
-    "post_reaction",
-    "pageview_br",
-    "pageview_latam",
-    "comments",
-    "page_engagement",
-    "post_engagement",
-    "shares",
-    "video_views",
-  ]);
+  // //creating header columns
+  // await adsGenderAgePageSheet.setHeaderRow([
+  //   "id",
+  //   "ad_id",
+  //   "date_start",
+  //   "date_stop",
+  //   "ad_name",
+  //   "adset_name",
+  //   "campaign_name",
+  //   "objective",
+  //   "optimization_goal",
+  //   "spend",
+  //   "frequency",
+  //   "reach",
+  //   "impressions",
+  //   "age",
+  //   "gender",
+  //   "link_clicks",
+  //   "post_reaction",
+  //   "pageview_br",
+  //   "pageview_latam",
+  //   "comments",
+  //   "page_engagement",
+  //   "post_engagement",
+  //   "shares",
+  //   "video_views",
+  // ]);
 
   //get data from sheet
   const items = await adsGenderAgePageSheet.getRows();
