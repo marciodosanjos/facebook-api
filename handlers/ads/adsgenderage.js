@@ -290,10 +290,33 @@ const getAdsGenderAgeData = async (account, token) => {
     (item) => !items.find((item2) => item.id == item2.id)
   );
 
+  // Function to handle rate-limited writing
+  const requestsPerMinute = 300;
+  let currentRequests = 0;
+  const requestQueue = [];
+
+  // Function to process the queue
+  async function processQueue() {
+    while (requestQueue.length > 0 && currentRequests < requestsPerMinute) {
+      const { action, params } = requestQueue.shift(); // Get the next request from the queue
+      currentRequests++;
+      await action(...params);
+    }
+  }
+
+  // Interval to reset the request count every minute
+  setInterval(() => {
+    currentRequests = 0;
+    processQueue(); // Process any remaining requests in the queue
+  }, 60000); // 1 minute in milliseconds
+
   // verify how many records is on the db
   if (items.length == 0) {
     console.log("A planilha esta vazia");
-    adsGenderAgePageSheet.addRows(newData);
+    requestQueue.push({
+      action: adsGenderAgePageSheet.addRows.bind(adsGenderAgePageSheet),
+      params: [newData],
+    });
     console.log(
       `O(s) novo(s) registros, no valor total de ${newData.length}, foram carregados na db com sucesso`
     );
@@ -312,34 +335,40 @@ const getAdsGenderAgeData = async (account, token) => {
         3000
       );
 
-      // update current row values
-      currentRows = items.filter((item1) =>
-        result.some((item2) => {
-          if (item1.id == item2.id) {
-            item1.ad_id = item2.ad_id; // update date value on db
-            item1.date_start = item2.date_start; // update date_start value on db
-            item1.date_stop = item2.date_stop; // update date_end value on db
-            item1.ad_name = item2.ad_name; // update ad_name value on db
-            item1.adset_name = item2.adset_name; // update adset_name value on db
-            item1.campaign_name = item2.campaign_name; // update campaign_name value on db
-            item1.objective = item2.objective; // update objective value on db
-            item1.optimization_goal = item2.optimization_goal; // update optimization_goal value on db
-            item1.spend = item2.spend; // update spend value on db
-            item1.frequency = item2.frequency; // update frequency value on db
-            item1.reach = item2.reach; // update reach reach on db
-            item1.impressions = item2.impressions; // update impressions value on db
-            item1.age = item2.age; // update age value on db
-            item1.gender = item2.gender; // update gender value on db
-            item1.link_clicks = item2.link_clicks; // update link_clicks value on db
-            item1.post_reaction = item2.post_reaction; // update post_reaction value on db
-            item1.pageview_br = item2.pageview_br; // update pageview_br value on db
-            item1.pageview_latam = item2.pageview_latam; // update pageview_latam value on db
-            item1.comments = item2.comments; // update comments value on db
-            item1.page_engagement = item2.page_engagement; // update page_engagement value on db
-            item1.post_engagement = item2.post_engagement; // update post_engagement value on db
-            item1.shares = item2.shares; // update shares value on db
-            item1.video_views = item2.video_views; // update video_views value on db
-            item1.save(); // save updates
+      // Atualizar os registros existentes
+      await Promise.all(
+        items.map(async (item1) => {
+          const item2 = result.find((item2) => item1.id == item2.id);
+          if (item2) {
+            // Atualiza os campos
+            item1.ad_id = item2.ad_id;
+            item1.date_start = item2.date_start;
+            item1.date_stop = item2.date_stop;
+            item1.ad_name = item2.ad_name;
+            item1.adset_name = item2.adset_name;
+            item1.campaign_name = item2.campaign_name;
+            item1.objective = item2.objective;
+            item1.optimization_goal = item2.optimization_goal;
+            item1.spend = item2.spend;
+            item1.frequency = item2.frequency;
+            item1.reach = item2.reach;
+            item1.impressions = item2.impressions;
+            item1.age = item2.age;
+            item1.gender = item2.gender;
+            item1.link_clicks = item2.link_clicks;
+            item1.post_reaction = item2.post_reaction;
+            item1.pageview_br = item2.pageview_br;
+            item1.pageview_latam = item2.pageview_latam;
+            item1.comments = item2.comments;
+            item1.page_engagement = item2.page_engagement;
+            item1.post_engagement = item2.post_engagement;
+            item1.shares = item2.shares;
+            item1.video_views = item2.video_views;
+
+            requestQueue.push({
+              action: item1.save.bind(item1),
+              params: [],
+            });
             setTimeout(
               () => console.log(`Record id ${item1.id} successfully updated`),
               4000
@@ -349,12 +378,17 @@ const getAdsGenderAgeData = async (account, token) => {
       );
     } else {
       console.log(`Há ${newData.length} novo(s) item(s) para subir`);
-      adsGenderAgePageSheet.addRows(newData);
+      requestQueue.push({
+        action: adsGenderAgePageSheet.addRows.bind(adsGenderAgePageSheet),
+        params: [newData],
+      });
       console.log(
         `O(s) novo(s) registros, no valor total de ${newData.length}, foram carregados na db com sucesso`
       );
     }
   }
+  // Start processing the queue immediately
+  processQueue();
 };
 
 module.exports = getAdsGenderAgeData;
