@@ -4,3 +4,5 @@
 /tokens/
 
 .env
+
+.token.json

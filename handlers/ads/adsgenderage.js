@@ -2,6 +2,7 @@
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 const axios = require("axios");
 const fetch = require("node-fetch");
+const { v4: uuidv4 } = require("uuid"); // Importa a função para gerar UUID v4
 
 // Initialize Google Sheets Auth
 const creds = require("../../tokens/key.json");
@@ -14,7 +15,9 @@ const getAdsGenderAgeData = async (account, token) => {
 
   // call teste act_726387872139953/insights?time_increment=30&time_range={since:'2024-01-01',until:'2024-01-30'}&fields=reach
 
-  const url = `https://graph.facebook.com/v19.0/${account}/insights?time_increment=1&time_range={since:'2024-04-01',until:'2024-04-15'}&level=ad&fields=ad_id,campaign_name, adset_name, ad_name,frequency,spend,reach,impressions,objective,optimization_goal,clicks,actions&action_breakdowns=action_type&breakdowns=age,gender&access_token=${token}`;
+  // const url = `https://graph.facebook.com/v19.0/${account}/insights?time_increment=1&time_range={since:'2024-01-01',until:'2024-01-30'}&level=campaign&fields=campaign_id,campaign_name,frequency,spend,reach,impressions,objective,optimization_goal,clicks,actions&action_breakdowns=action_type&access_token=${token}`;
+
+  const url = `https://graph.facebook.com/v19.0/${account}/insights?time_increment=1&time_range={since:'2024-09-16',until:'2024-09-30'}&level=ad&fields=ad_id,campaign_name, adset_name, ad_name,frequency,spend,reach,impressions,objective,optimization_goal,clicks,actions&action_breakdowns=action_type&breakdowns=age,gender&access_token=${token}`;
 
   async function fetchPaginatedData(url) {
     let allData = [];
@@ -26,10 +29,6 @@ const getAdsGenderAgeData = async (account, token) => {
       try {
         console.log("Fetching data...");
         const response = await fetch(nextUrl, { timeout: 30000 }); // timeout em milissegundos (30 segundos)
-        const remainingQuota = response.headers.get("X-RateLimit-Remaining");
-        const resetTime = response.headers.get("X-RateLimit-Reset");
-        console.log(remainingQuota);
-        console.log(resetTime);
 
         const data = await response.json();
         if (data.data) {
@@ -64,6 +63,28 @@ const getAdsGenderAgeData = async (account, token) => {
   }
 
   const data = await fetchPaginatedData(url);
+
+  // Somar o reach de todos os itens no array inicial
+  const totalReachInit = data.reduce((sum, item) => {
+    return sum + parseInt(item.reach); // Converter reach para número
+  }, 0);
+
+  // Somar o reach de todos os itens no array inicial
+  const totalImpressionshInit = data.reduce((sum, item) => {
+    return sum + parseInt(item.impressions); // Converter reach para número
+  }, 0);
+
+  console.log("Total itens no array inicial:", data.length);
+
+  console.log(
+    "Total reach de todos os itens no array inicial:",
+    totalReachInit
+  );
+
+  console.log(
+    "Total impression de todos os itens no array inicial:",
+    totalImpressionshInit
+  );
 
   // orgazing data in arrays
   let cliques = data.map((el) => {
@@ -192,15 +213,24 @@ const getAdsGenderAgeData = async (account, token) => {
 
   //   //storing the data on the ads performance
   let result = data.map((element, index) => {
+    function generateUniqueId(element) {
+      const age = element.age.slice(0, 2);
+      const gender = element.gender.slice(0, 2).toUpperCase();
+      const adsetName = element.adset_name.slice(3, 5);
+      const genderPart = element.gender.slice(1, 4);
+      const fullAge = element.age;
+      const campaignName = element.campaign_name.slice(1, 3);
+      const adId = element.ad_id.slice(2, 8);
+      const dateStart = element.date_start.slice(3, 5);
+
+      // Concatenando os valores usando um delimitador "_"
+      const uniqueId = `${age}_${gender}_${adsetName}_${genderPart}_${fullAge}_${campaignName}_${adId}_${dateStart}_${Date.now()}`;
+
+      return uniqueId;
+    }
+
     return {
-      id:
-        element.age.slice(0, 2) +
-        element.gender.slice(0, 2).toUpperCase() +
-        element.adset_name.slice(3, 5) +
-        element.gender.slice(1, 4) +
-        element.age +
-        element.campaign_name.slice(1, 3) +
-        element.ad_id.slice(2, 8),
+      id: generateUniqueId(element),
       ad_id: element.ad_id,
       date_start: element.date_start,
       date_stop: element.date_stop,
@@ -227,19 +257,13 @@ const getAdsGenderAgeData = async (account, token) => {
     };
   });
 
-  // Somar o reach de todos os itens
+  // Somar o reach de todos os itens no array final
   const totalReach = result.reduce((sum, item) => {
     return sum + parseInt(item.reach); // Converter reach para número
   }, 0);
 
-  console.log("Total de Reach:", totalReach);
-
-  function temDuplicatas(arr) {
-    const valoresUnicos = arr.map((elem, index, self) => {
-      return self.indexOf(elem) === index;
-    });
-    return arr.length !== valoresUnicos.length;
-  }
+  console.log("Total  reach de todos os itens no array final:", totalReach);
+  console.log("Total itens array final:", result.length);
 
   //========================== Step 2: Recording data on DB ===========================
   await doc.useServiceAccountAuth(creds);
@@ -285,10 +309,23 @@ const getAdsGenderAgeData = async (account, token) => {
   //get data from sheet
   const items = await adsGenderAgePageSheet.getRows();
 
-  //verify how many NEW records there is to load
+  // Filtrar itens de listaA que não estão em listaB, comparando por id
   const newData = result.filter(
-    (item) => !items.find((item2) => item.id == item2.id)
+    (itemNovo) =>
+      !items.some(
+        (itemExisente) =>
+          String(itemNovo.id).trim() === String(itemExisente.id).trim()
+      )
   );
+
+  console.log("Total de itens novos", newData.length);
+
+  // Somar o reach de todos os itens no array final
+  const totalReachNewItems = newData.reduce((sum, item) => {
+    return sum + parseInt(item.reach); // Converter reach para número
+  }, 0);
+
+  console.log("Total reach nos itens novos:", totalReachNewItems);
 
   // Function to handle rate-limited writing
   const requestsPerMinute = 300;
@@ -311,12 +348,13 @@ const getAdsGenderAgeData = async (account, token) => {
   }, 60000); // 1 minute in milliseconds
 
   // verify how many records is on the db
-  if (items.length == 0) {
+  if (items.length === 0) {
     console.log("A planilha esta vazia");
     requestQueue.push({
       action: adsGenderAgePageSheet.addRows.bind(adsGenderAgePageSheet),
       params: [newData],
     });
+
     console.log(
       `O(s) novo(s) registros, no valor total de ${newData.length}, foram carregados na db com sucesso`
     );
@@ -325,8 +363,9 @@ const getAdsGenderAgeData = async (account, token) => {
       `A tabela ${adsGenderAgePageSheet.title} tem ${items.length} registros`
     );
 
-    if (newData.length == 0) {
+    if (newData.length === 0) {
       setTimeout(() => console.log(`Não há registros novos para subir`), 2000);
+      process.exit(0);
       setTimeout(
         () =>
           console.log(
@@ -386,9 +425,9 @@ const getAdsGenderAgeData = async (account, token) => {
         `O(s) novo(s) registros, no valor total de ${newData.length}, foram carregados na db com sucesso`
       );
     }
+    // Start processing the queue immediately
   }
-  // Start processing the queue immediately
-  processQueue();
+  await processQueue();
 };
 
 module.exports = getAdsGenderAgeData;

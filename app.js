@@ -11,7 +11,7 @@ const getAdsRegionCountry = require("./handlers/ads/adsregioncountry");
 const getAdsPlatform = require("./handlers/ads/adsplatform");
 
 //tokens
-const igToken = require("./tokens/igtoken");
+const userAccessToken = require("./tokens/userAccessToken");
 const tokenfblatam = require("./tokens/tokenfblatam");
 const tokenfbbr = require("./tokens/tokenfbbr");
 
@@ -50,7 +50,7 @@ const tokenfbbr = require("./tokens/tokenfbbr");
 //============================== ADS ========================================//
 
 //get ads data gender and age breakdown'
-getAdsGenderAgeData("act_726387872139953", igToken);
+getAdsGenderAgeData("act_726387872139953", userAccessToken);
 
 // // get ads data region and country breakdown
 // getAdsRegionCountry("act_726387872139953", igToken);
