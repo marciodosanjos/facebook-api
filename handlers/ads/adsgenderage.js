@@ -17,7 +17,7 @@ const getAdsGenderAgeData = async (account, token) => {
 
   // const url = `https://graph.facebook.com/v19.0/${account}/insights?time_increment=1&time_range={since:'2024-01-01',until:'2024-01-30'}&level=campaign&fields=campaign_id,campaign_name,frequency,spend,reach,impressions,objective,optimization_goal,clicks,actions&action_breakdowns=action_type&access_token=${token}`;
 
-  const url = `https://graph.facebook.com/v19.0/${account}/insights?time_increment=1&time_range={since:'2024-09-16',until:'2024-09-30'}&level=ad&fields=ad_id,campaign_name, adset_name, ad_name,frequency,spend,reach,impressions,objective,optimization_goal,clicks,actions&action_breakdowns=action_type&breakdowns=age,gender&access_token=${token}`;
+  const url = `https://graph.facebook.com/v19.0/${account}/insights?time_increment=1&time_range={since:'2024-09-16',until:'2024-09-31'}&level=ad&fields=ad_id,campaign_name, adset_name, ad_name,frequency,spend,reach,impressions,objective,optimization_goal,clicks,actions&action_breakdowns=action_type&breakdowns=age,gender&access_token=${token}`;
 
   async function fetchPaginatedData(url) {
     let allData = [];
@@ -365,7 +365,6 @@ const getAdsGenderAgeData = async (account, token) => {
 
     if (newData.length === 0) {
       setTimeout(() => console.log(`Não há registros novos para subir`), 2000);
-      process.exit(0);
       setTimeout(
         () =>
           console.log(
@@ -425,8 +424,8 @@ const getAdsGenderAgeData = async (account, token) => {
         `O(s) novo(s) registros, no valor total de ${newData.length}, foram carregados na db com sucesso`
       );
     }
-    // Start processing the queue immediately
   }
+  // Start processing the queue immediately
   await processQueue();
 };
 

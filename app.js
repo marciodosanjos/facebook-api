@@ -49,17 +49,11 @@ const tokenfbbr = require("./tokens/tokenfbbr");
 
 //============================== ADS ========================================//
 
-//get ads data gender and age breakdown'
-getAdsGenderAgeData("act_726387872139953", userAccessToken);
+// //get ads data gender and age breakdown'
+// getAdsGenderAgeData("act_726387872139953", userAccessToken);
 
-// // get ads data region and country breakdown
-// getAdsRegionCountry("act_726387872139953", igToken);
-
-// get ads data plattform breakdown
-// getAdsPlatform("act_726387872139953", igToken);
-
-//
-//============================== Google ========================================//
+//get ads data plattform breakdown
+getAdsPlatform("act_726387872139953", userAccessToken);
 
 app.listen("8080", () => {
   console.log("Server running");
