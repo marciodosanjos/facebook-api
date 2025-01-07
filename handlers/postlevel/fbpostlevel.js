@@ -11,7 +11,7 @@ const doc = new GoogleSpreadsheet(
 const getFacePostData = async (idpage, token) => {
   //========================== Step 1: Getting data via API ===========================
 
-  const url = `https://graph.facebook.com/v14.0/${idpage}?fields=published_posts.since(2023-08-31).until(2024-09-30){id,created_time,insights.metric(post_impressions_paid,post_impressions_paid_unique, post_impressions_organic,post_impressions_organic_unique,post_reactions_by_type_total, post_activity_by_action_type, post_clicks_by_type), message, permalink_url}&access_token=${token}`;
+  const url = `https://graph.facebook.com/v14.0/${idpage}?fields=published_posts.since(2024-12-01).until(2025-01-01){id,created_time,insights.metric(post_impressions_paid,post_impressions_paid_unique, post_impressions_organic,post_impressions_organic_unique,post_reactions_by_type_total, post_activity_by_action_type, post_clicks_by_type), message, permalink_url}&access_token=${token}`;
 
   //url fetch and data transform
   let response = await axios.get(url);

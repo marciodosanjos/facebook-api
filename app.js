@@ -18,39 +18,39 @@ const tokenfbbr = require("./tokens/tokenfbbr");
 //============================== INSTAGRAM POST LEVEL =========================//
 
 // //get insta post data LATAM
-// getInstaPostData("17841457817656889", igToken);
+//getInstaPostData("17841457817656889", userAccessToken);
 
 // //get insta post data BR
-// getInstaPostData("17841457253047574", igToken);
-
-//============================== INSTAGRAM PAGE LEVEL =========================//
-
-// //get insta page data BR
-// getInstaPageData("17841457817656889", igToken);
-
-// //get insta page data LATAM
-// getInstaPageData("17841457253047574", igToken);
+//getInstaPostData("17841457253047574", userAccessToken);
 
 //============================== FACEBOOK POST LEVEL =========================//
 
 // //get fb post level data BR
-// getFacePostData("108683005456780", tokenfbbr);
+//getFacePostData("108683005456780", tokenfbbr);
 
 // // get fb post level data LATAM
-// getFacePostData("260411577472305", tokenfblatam);
+//getFacePostData("260411577472305", tokenfblatam);
+
+//============================== INSTAGRAM PAGE LEVEL =========================//
+
+//get insta page data BR
+//getInstaPageData("17841457817656889", userAccessToken);
+
+// //get insta page data LATAM
+//getInstaPageData("17841457253047574", userAccessToken);
 
 //============================== FACEBOOK PAGE LEVEL =========================//
 
 // //get fb page level data BR
-// getFacePageData("108683005456780", tokenfbbr);
+//getFacePageData("108683005456780", tokenfbbr);
 
 // //get fb page level data LATAM
-// getFacePageData("260411577472305", tokenfblatam);
+//getFacePageData("260411577472305", tokenfblatam);
 
 //============================== ADS ========================================//
 
 // //get ads data gender and age breakdown'
-// getAdsGenderAgeData("act_726387872139953", userAccessToken);
+//getAdsGenderAgeData("act_726387872139953", userAccessToken);
 
 //get ads data plattform breakdown
 getAdsPlatform("act_726387872139953", userAccessToken);

@@ -9,9 +9,11 @@ const doc = new GoogleSpreadsheet(
   "1JlicWF4OP7qgyRXDR7UFp3zpjigT3Lx9DrqjF-8IlsU"
 );
 
+// ?time_increment=1&time_range={since:'2024-09-01',until:'2024-09-31'}&level=ad&fields= reach, impressions&breakdowns=publisher_platform,platform_position, device_platform,impression_device
+
 const getAdsPlatform = async (account, token) => {
   //========================== Step 1: Fechting data via API ===========================
-  const url = `https://graph.facebook.com/v19.0/${account}/insights?time_increment=1&time_range={since:'2024-08-01',until:'2024-08-31'}&level=ad&fields=ad_id,campaign_name, adset_name, ad_name,frequency, spend, reach, impressions, objective, optimization_goal, clicks, actions&action_breakdowns=action_type&breakdowns=publisher_platform,platform_position, device_platform,impression_device&access_token=${token}`;
+  const url = `https://graph.facebook.com/v19.0/${account}/insights?time_increment=1&time_range={since:'2024-12-25',until:'2025-01-01'}&level=ad&fields=ad_id,campaign_name, adset_name, ad_name,frequency, spend, reach, impressions, objective, optimization_goal, clicks, actions&action_breakdowns=action_type&breakdowns=publisher_platform,platform_position, device_platform,impression_device&access_token=${token}`;
 
   //raw data
   // let response = await axios.get(url);
