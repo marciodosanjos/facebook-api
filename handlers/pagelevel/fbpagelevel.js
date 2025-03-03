@@ -13,7 +13,7 @@ const getFacePageData = async (pageid, token) => {
   //========================== Step 1: Fetching raw data via API ===========================
 
   //url
-  const url = `https://graph.facebook.com/v19.0/${pageid}/insights?metric=page_posts_impressions_paid,page_posts_impressions_paid_unique, page_posts_impressions_organic,page_posts_impressions_organic_unique, page_total_actions, page_post_engagements, page_fan_adds_by_paid_non_paid_unique,page_actions_post_reactions_total,page_fans,page_fan_adds, page_fan_removes&since=2024-12-01&until=2025-01-01&period=day&access_token=${token}`;
+  const url = `https://graph.facebook.com/v22.0/${pageid}/insights?metric=page_posts_impressions_paid,page_posts_impressions_paid_unique, page_posts_impressions_organic,page_posts_impressions_organic_unique, page_total_actions, page_post_engagements, page_fan_adds_by_paid_non_paid_unique,page_actions_post_reactions_total,page_fans,page_fan_adds, page_fan_removes&since=2025-02-01&until=2025-03-01&period=day&access_token=${token}`;
 
   let response = await axios.get(url);
   const data = response.data.data;
@@ -134,7 +134,10 @@ const getFacePageData = async (pageid, token) => {
         item.slice(6, 7) +
         item.slice(8, 10) +
         pageid.slice(1, 6) +
-        new Date().getFullYear(),
+        new Date().getFullYear() +
+        paidImpressionsUnique[index] +
+        totalActions[index] +
+        pageid,
       paid_impressions: paidImpressions[index],
       paid_impressions_unique: paidImpressionsUnique[index],
       organic_impressions: organicImpressions[index],
@@ -159,8 +162,6 @@ const getFacePageData = async (pageid, token) => {
       pageid: pageid,
     };
   });
-
-  console.log(fbPageData);
 
   //========================== Step 2: Recording data on DB ===========================
 
@@ -205,7 +206,6 @@ const getFacePageData = async (pageid, token) => {
 
   //obtendo dados da plan
   const items = await facePageSheet.getRows();
-  console.log(items);
 
   //verify how many NEW records there is to load
   const newData = fbPageData.filter(

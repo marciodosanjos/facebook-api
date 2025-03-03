@@ -13,7 +13,7 @@ const doc = new GoogleSpreadsheet(
 const getInstaPageData = async (pageId, token) => {
   //========================== Step 1: Getting data via API ===========================
 
-  const url = `https://graph.facebook.com/v14.0/${pageId}/insights?metric=follower_count, profile_views, website_clicks&period=day&since=2024-12-03&until=2025-01-01&access_token=${token}`;
+  const url = `https://graph.facebook.com/v14.0/${pageId}/insights?metric=follower_count&period=day&since=2025-02-01&until=2025-03-01&access_token=${token}`;
 
   let response = await axios.get(url);
 
@@ -23,23 +23,24 @@ const getInstaPageData = async (pageId, token) => {
   let date = data[0].values.map((el) => el.end_time);
   //followers
   let follow_count = data[0].values.map((el) => el.value);
+
   //profile views
-  let profile_views = data[1].values.map((el) => el.value);
+  //let profile_views = data[1].values.map((el) => el.value);
   //website_clicks
-  let website_clicks = data[2].values.map((el) => el.value);
+  //let website_clicks = data[2].values.map((el) => el.value);
 
   //2 - storing in this array of objects the basic data about the page
   let result = date.map((item, index) => {
     return {
       id:
         follow_count[index] * 976245695 +
-        website_clicks[index] * 455687456 +
-        profile_views[index] * 37234532 +
+        follow_count[index] * 455687456 +
+        follow_count[index] * 37234532 +
         new Date().getFullYear(),
       date: item,
       follow_count: follow_count[index],
-      profile_views: profile_views[index],
-      website_clicks: website_clicks[index],
+      profile_views: 0,
+      website_clicks: 0,
       page_id: pageId,
     };
   });

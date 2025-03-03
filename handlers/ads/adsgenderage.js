@@ -17,7 +17,7 @@ const getAdsGenderAgeData = async (account, token) => {
 
   // const url = `https://graph.facebook.com/v19.0/${account}/insights?time_increment=1&time_range={since:'2024-01-01',until:'2024-01-30'}&level=campaign&fields=campaign_id,campaign_name,frequency,spend,reach,impressions,objective,optimization_goal,clicks,actions&action_breakdowns=action_type&access_token=${token}`;
 
-  const url = `https://graph.facebook.com/v20.0/${account}/insights?time_increment=1&time_range={since:'2024-12-20',until:'2025-01-01'}&level=ad&fields=ad_id,campaign_name, adset_name, ad_name,frequency,spend,reach,impressions,objective,optimization_goal,clicks,actions&action_breakdowns=action_type&breakdowns=age,gender&access_token=${token}`;
+  const url = `https://graph.facebook.com/v20.0/${account}/insights?time_increment=1&time_range={since:'2025-02-07',until:'2025-02-15'}&level=ad&fields=ad_id,campaign_name, adset_name, ad_name,frequency,spend,reach,impressions,objective,optimization_goal,clicks,actions&action_breakdowns=action_type&breakdowns=age,gender&access_token=${token}`;
 
   async function fetchPaginatedData(url) {
     let allData = [];
